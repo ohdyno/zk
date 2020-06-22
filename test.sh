@@ -1,16 +1,14 @@
-#!/bin/sh
+#!/bin/bash
 # Tests for the zk program
 
-set -e
+source "./lib/assert.sh"
 
-fail() {
-    printf "Test Failed. Expected '%s' but got '%s'\n", $expected, $actual
-    exit 1
-}
+assert "./zk.sh find 'test1'" "./test2.md:1:[[test1]]"
 
-actual=`./zk.sh -f 'test1'`
-expected="./test2.md:1:[[test1]]"
+assert "./zk.sh generate 'test1'" "[[test1]]"
 
-if [ $actual != $expected ]; then
-    fail
-fi
+assert "./zk.sh generate | wc -m | tr -d \[:space:\]" "16"
+
+assert "./zk.sh | head -n1 | sed -e 's/:.*$//'" "Usage"
+
+assert_end "Zettelkasten"
